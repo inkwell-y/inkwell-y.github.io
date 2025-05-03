@@ -22,6 +22,7 @@ const config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'inkwell-y', // Usually your GitHub org/user name.
   projectName: 'inkwell-y.github.io', // Usually your repo name.
+  deploymentBranch: 'main',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
