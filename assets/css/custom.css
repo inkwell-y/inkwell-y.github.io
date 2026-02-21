@@ -239,3 +239,9 @@ a[href*="/tags/"] {
   white-space: nowrap;
 }
 
+/* Desktop reading width: tune article content without breaking zen-mode toggle */
+@media (min-width: 1024px) {
+  .article-content.max-w-3xl {
+    max-width: 56rem; /* = 896px, wider than 3xl(768px) */
+  }
+}
