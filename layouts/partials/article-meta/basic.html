@@ -1,0 +1,154 @@
+{{/* Determine the correct context and scope */}}
+{{/* This allows for different logic depending on where the partial is called */}}
+{{ $context := . }}
+{{ $scope := default nil }}
+
+{{ if (reflect.IsMap . ) }}
+{{ $context = .context }}
+{{ $scope = cond (not .scope) nil .scope }}
+{{ end }}
+
+{{ with $context }}
+{{ $meta := newScratch }}
+
+{{/* Gather partials for this context */}}
+{{ $shouldShowDate := false }}
+{{ if .Params.showDate | default (.Site.Params.article.showDate | default true) }}
+{{ $shouldShowDate = true }}
+{{ else }}
+{{ $shouldShowDate = false }}
+{{ end }}
+
+{{ if (.Params.showDateOnlyInArticle | default (.Site.Params.article.showDateOnlyInArticle | default false)) }}
+{{ if (ne $scope "single") }}
+{{/* only takes effect when not called directly in the header of single.html */}}
+{{ $shouldShowDate = false }}
+{{ end }}
+{{ end }}
+
+{{ if $shouldShowDate }}
+{{ $meta.Add "info" (slice (partial "meta/date.html" .Date)) }}
+{{ end }}
+
+{{ if and (.Params.showDateUpdated | default (.Site.Params.article.showDateUpdated | default false)) (ne (partial
+"functions/date.html" .Date) (partial "functions/date.html" .Lastmod)) (gt (.Lastmod | time.Format "2006") 1)
+}}
+{{ $meta.Add "info" (slice (partial "meta/date-updated.html" .Lastmod)) }}
+{{ end }}
+
+{{ if and (.Params.showWordCount | default (.Site.Params.article.showWordCount | default false)) (ne .WordCount 0) }}
+{{ $meta.Add "info" (slice (partial "meta/word-count.html" .)) }}
+{{ end }}
+
+{{ if and (.Params.showReadingTime | default (.Site.Params.article.showReadingTime | default true)) (ne .ReadingTime 0)
+}}
+{{ $meta.Add "info" (slice (partial "meta/reading-time.html" .)) }}
+{{ end }}
+
+{{ if and (not .Params.externalURL) (.Params.showViews | default (.Site.Params.article.showViews | default false)) }}
+{{ $meta.Add "info" (slice (partial "meta/views.html" .)) }}
+{{ end }}
+
+{{ if and (not .Params.externalURL) (.Params.showLikes | default (.Site.Params.article.showLikes | default false)) }}
+{{ $meta.Add "info" (slice (partial "meta/likes.html" .)) }}
+{{ end }}
+
+{{ if and (eq $scope "single") (not .Params.externalURL) (.Params.showLikes | default (.Site.Params.article.showLikes |
+default false)) }}
+{{ $meta.Add "controls" (slice (partial "meta/likes_button.html" .)) }}
+{{ end }}
+
+{{ if and (eq $scope "single") (.Params.showEdit | default (.Site.Params.article.showEdit | default false)) }}
+{{ $meta.Add "controls" (slice (partial "meta/edit.html" .)) }}
+{{ end }}
+
+{{ if and (eq $scope "single") (.Params.showZenMode | default (.Site.Params.article.showZenMode | default false)) }}
+{{ $meta.Add "controls" (slice (partial "meta/zen-mode.html" .)) }}
+{{ end }}
+
+{{ if and (eq $scope "single") (ne .Site.Language.Lang "en") }}
+{{ $meta.Add "controls" (slice (partial "meta/language-switch.html" .)) }}
+{{ end }}
+
+
+<div class="article-meta-wrapper">
+  <div class="flex items-center justify-between gap-x-3 flex-wrap">
+    <div class="flex items-center gap-x-3 flex-wrap min-w-0 flex-1">
+      {{ with ($meta.Get "info") }}
+      {{ delimit . "<span class=\"px-2 text-primary-500\">&middot;</span>" | safeHTML }}
+      {{ end }}
+
+      {{ if and (eq $scope "single") (and .Draft .Site.Params.article.showDraftLabel) }}
+      <span class="ps-2">{{ partial "badge.html" (i18n "article.draft" | emojify) }}</span>
+      {{ end }}
+    </div>
+
+    {{ if eq $scope "single" }}
+    {{ with .Params.tags }}
+    <div class="flex flex-nowrap items-center gap-2 max-w-full overflow-x-auto">
+      {{ range . }}
+      <a class="shrink-0 inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-xs leading-none text-neutral-700 hover:bg-neutral-200 hover:text-primary-700 dark:bg-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-600 dark:hover:text-primary-200 transition"
+        href="{{ printf "/tags/%s/" (. | urlize) | relLangURL }}">
+        {{ . }}
+      </a>
+      {{ end }}
+    </div>
+    {{ end }}
+    {{ end }}
+  </div>
+
+  {{ if or ($meta.Get "controls") }}
+  <div class="article-meta-row meta-controls">
+    {{ range ($meta.Get "controls") }}
+    {{ . }}
+    {{ end }}
+  </div>
+  {{ end }}
+</div>
+
+{{ if .Params.showAuthorsBadges | default (.Site.Params.article.showAuthorsBadges | default false) }}
+<div class="flex flex-row flex-wrap items-center">
+  {{ range $taxonomy, $terms := .Site.Taxonomies }}
+  {{ if (eq $taxonomy "authors") }}
+  {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
+  {{ range $i, $a := $context.GetTerms $taxonomy }}
+  {{ if not (eq $i 0) }}
+  ,&nbsp;
+  {{ end }}
+  <a href="{{ $a.RelPermalink }}" class="relative">{{ $a.LinkTitle }}</a>
+  {{ end }}
+  {{ end }}
+  {{ end }}
+  {{ end }}
+</div>
+{{ end }}
+
+{{/* Output taxonomies */}}
+{{ if .Params.showTaxonomies | default (.Site.Params.article.showTaxonomies | default false) }}
+<div class="flex flex-row flex-wrap items-center">
+  {{ range $taxonomy, $terms := .Site.Taxonomies }}
+  {{ if and (not (eq $taxonomy "authors")) (not (eq $taxonomy "series")) }}
+  {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
+  {{ range $context.GetTerms $taxonomy }}
+  <a class="relative mt-[0.5rem] me-2" href="{{ .RelPermalink }}">
+    {{ partial "badge.html" .LinkTitle }}
+  </a>
+  {{ end }}
+  {{ end }}
+  {{ end }}
+  {{ end }}
+</div>
+{{ end }}
+
+{{/* Output only category */}}
+{{ if .Params.showCategoryOnly | default (.Site.Params.article.showCategoryOnly | default false) }}
+<div class="flex flex-row flex-wrap items-center">
+  {{ range (.GetTerms "categories") }}
+  <a class="relative mt-[0.5rem] me-2" href="{{ .RelPermalink }}">
+    {{ partial "badge.html" .LinkTitle }}
+  </a>
+  {{ end }}
+</div>
+{{ end }}
+
+{{ end }}

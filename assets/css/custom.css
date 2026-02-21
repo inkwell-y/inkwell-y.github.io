@@ -1,0 +1,240 @@
+@font-face {
+  font-family: "Source Han Sans TW";
+  src: url("/fonts/SourceHanSansTW-Regular.otf") format("opentype");
+  font-display: swap;
+}
+
+/* 全站统一：英文优先 Palatino；中文自动回退思源 */
+html,
+body {
+  font-family:
+    "Palatino Linotype",
+    Palatino,
+    "Book Antiqua",
+    "Source Han Sans TW",
+    "PingFang TC",
+    "Microsoft JhengHei",
+    "Noto Sans TC",
+    serif;
+}
+
+
+
+/* 1) 保留你暗色背景（示例） */
+html.dark {
+  --color-neutral-900: 24, 24, 27;
+  --color-neutral-800: 32, 32, 36;
+  --color-neutral-700: 48, 48, 54;
+}
+
+/* 2) Hero 背景图不要被压暗：移除/减弱 overlay */
+html.dark .hero,
+html.dark [class*="hero"] {
+  filter: none !important;
+}
+
+/* 常见：hero 上有一层半透明遮罩（overlay/pseudo-element），把它关掉或调淡 */
+html.dark .hero::before,
+html.dark .hero::after,
+html.dark [class*="hero"]::before,
+html.dark [class*="hero"]::after {
+  opacity: 0.05 !important;
+  /* 你也可以改成 0 直接关 */
+}
+
+
+header .translation.nested-menu button span {
+  display: none !important;
+}
+
+/* 保證 svg icon 仍顯示 */
+header .translation.nested-menu button svg {
+  display: inline-block !important;
+}
+
+.lang-toggle-btn {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid rgba(var(--color-neutral-300), 1);
+  border-radius: 9999px;
+  background: rgba(var(--color-neutral-100), 1);
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+}
+
+.lang-toggle-label {
+  display: inline-block;
+  line-height: 1;
+  position: relative;
+  top: 1.75px;
+}
+
+.lang-toggle-btn:hover {
+  background: rgba(var(--color-neutral-200), 1);
+}
+
+.lang-toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dark .lang-toggle-btn {
+  background: rgba(var(--color-neutral-800), 1);
+  color: inherit;
+  border-color: rgba(var(--color-neutral-600), 1);
+}
+
+.dark .lang-toggle-btn:hover {
+  background: rgba(var(--color-neutral-700), 1);
+}
+
+/* FIX: Zen mode item alignment — do NOT touch lang-toggle styles */
+.zen-mode-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  line-height: 1.25rem;
+  font-size: 1rem;
+  color: inherit;
+  margin-left: 0.75rem;  /* 向右移动，增加左边距 */
+  /* match lang-toggle button color */
+}
+
+/* 暗色模式下 */
+.dark .zen-mode-button {
+  color: inherit;
+}
+
+.zen-mode-button {
+  display: inline-flex;
+  align-items: center;
+  /* replace baseline */
+  gap: 0.25rem;
+  line-height: 1.25rem;
+  /* match meta row text rhythm */
+}
+
+.zen-mode-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.zen-mode-icon svg {
+  display: block;
+  /* prevent baseline weirdness */
+  width: 1em;
+  height: 1em;
+  transform: translateY(3px);
+  /* 微调：1px 往下；不对就改成 -1px 或 0 */
+}
+
+/* Optional micro-tweak ONLY if still off by ~1px:
+     transform: translateY(1px);  (or -1px) */
+
+/* Match Zen label baseline to lang-toggle label */
+.zen-mode-label {
+  display: inline-block;
+  line-height: 1.25rem;
+  transform: translateY(4.5px);
+}
+
+/* FIX: TOC / Outline alignment (update selector to actual toc toggle class) */
+.toc-toggle,
+.toc-toggle-button,
+button[aria-controls="TableOfContents"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  line-height: 1.25rem;
+  color: inherit;
+}
+
+.toc-toggle svg,
+.toc-toggle-button svg,
+button[aria-controls="TableOfContents"] svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+}
+
+
+@media (max-width: 640px) {
+  .zen-mode-label {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .main-menu .translation.nested-menu {
+    position: relative;
+  }
+
+  .main-menu .translation .menuhide {
+    left: 50%;
+    top: 100%;
+    margin-top: 0.5rem;
+    transform: translateX(-50%);
+    z-index: 1200;
+  }
+}
+
+/* Mid-desktop: hide TOC/sidebar to free width */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  main aside {
+    display: none !important;
+  }
+}
+
+.toc-right,
+.toc-inside {
+  max-width: 220px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding: 0.5rem 0.75rem;
+
+  margin-left: auto;
+  margin-right: 0;
+  transform: translateX(8px);
+
+  /* 关键：在左侧画一条竖虚线 */
+  border-left: 3px double rgba(148, 163, 184, 0.6);
+  /* 灰色虚线 */
+  padding-left: 1rem;
+  /* 让内容离线稍微远一点，看起来不挤 */
+}
+
+/* 保留你原来的 nav 内边距设置 */
+.toc-right nav,
+.toc-inside nav {
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.35rem;
+}
+
+/* Article Meta Row Restructure */
+.article-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 2.6rem;
+  align-items: center;
+}
+
+.meta-info {
+  color: rgba(var(--color-neutral-600), 1);
+}
+
+.meta-controls {
+  justify-content: flex-start;
+  margin-top: 0.05rem;
+  /* Optional: add some spacing between rows if needed, though flex gap handles wrap, separate divs need margin */
+}
+
+/* --- TAG --- */
+/* 讓 tag 連結文字不換行（避免一個 tag 變兩行） */
+a[href^="/tags/"],
+a[href*="/tags/"] {
+  white-space: nowrap;
+}
