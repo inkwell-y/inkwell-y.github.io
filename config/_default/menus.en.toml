@@ -75,3 +75,9 @@
   title = "RSS"
   url = "/index.xml"
   weight = 999
+
+[[footer]]
+  pre = "email"
+  name = "Write to me"
+  url = "mailto:hola@inkwell-y.blog"
+  weight = 10
