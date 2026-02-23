@@ -107,7 +107,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200
   },
   "right": {
     "id": "9e72764a6fefe2f6",
@@ -209,13 +209,18 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "46640d49d48a135b",
+  "active": "10201bd8f66367c6",
   "lastOpenFiles": [
+    "is-it-just-me-or/apple.webp",
+    "is-it-just-me-or/index.zh-tw.md",
+    "is-it-just-me-or/apple_scaled.webp",
+    "is-it-just-me-or/apple_lohalo-loseless.webp",
+    "is-it-just-me-or/apple_lohalo.webp",
+    "is-it-just-me-or/apple_nohalo.webp",
+    "is-it-just-me-or/apple.png",
     "1-post.en.md",
     "2-post.zh-tw/index.md",
     "2-post.zh-tw/1.jpeg",
-    "is-it-just-me-or/index.zh-tw.md",
-    "is-it-just-me-or/apple.webp",
     "is-it-just-me-or",
     "2-post/未命名.md",
     "index.md",
